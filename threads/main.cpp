@@ -1,58 +1,40 @@
-#include <vector>
-#include <iostream>
-#include <string>
-#include <random>
-
-/**
- * @brief Generates points from [0,1[ with a standard distribution
- * 
- * @param points Vector that contains if the points are in or outside of the circle
- * @param number_amount The amount of numbers used for the simulation
- */
-void generate_points(std::vector<bool>& points, int& number_amount);
-/**
- * @brief Checks if the x and y values are inside the circle
- * 
- * @param x_value The x value for the point
- * @param y_value The y value for the point
- * @return true The point is in the circle
- * @return false The point is out of the circle
- */
-bool calculate_position(double& x_value, double& y_value);
-/**
- * @brief Approximates pi with the amount of points calculated in the circle
- * 
- * @param points Contains the vector that contains if the points are in or outside of the circle
- * @return double The answer with the approximated pi
- */
-double approximate_pi(std::vector<bool>& points);
-/**
- * @brief Show the obtained results in the command line
- * 
- * @param pi The variable containing the approximation
- */
-void show_results(double& pi);
-
+#include "main.h"
 
 int main(int argc, char ** argv) {
-  if (argc == 2) {
+  if (argc == 3) {
     int number_amount = std::stoi(argv[1]);
-    // Create the vector to hold the points
-    std::vector<bool> points;
-    // Generate the points
-    generate_points(points, number_amount);
-    // Approximate pi
-    double pi = approximate_pi(points);
+    int thread_count = std::stoi(argv[2]);
+    double total_in_circle = handle_threads(number_amount, thread_count);
+    double pi = approximate_pi(number_amount, total_in_circle);
     show_results(pi);
   } else {
     std::cerr << 
-        "Please only insert the amount of numbers for the simulation"
+        "Please only insert the amount of numbers for the simulation and the thread count"
         << std::endl;
   }
   return 0;
 }
 
-void generate_points(std::vector<bool>& points, int& number_amount) {
+double handle_threads(int& number_amount, int& thread_count) {
+  // Vector containing the threads
+  std::vector<std::thread> threads;
+  // Private data for each thread
+  std::vector<private_data> private_data_vector;
+  // Creates the threads
+  for (int i = 0; i < thread_count; ++i) {
+    threads.push_back(std::thread(generate_points));
+    private_data_vector.emplace_back();
+  }
+  double total_in_circle = 0.0;
+  // Joins the threads
+  for (int i = 0; i < thread_count; ++i) {
+    threads[i].join();
+    total_in_circle += private_data_vector[i].total_in_circle;
+  }
+  return total_in_circle;
+}
+
+void generate_points(int& number_amount, private_data& private_data) {
   // Create the default random engine generator
   std::default_random_engine generator;
   // Set the distribution in the range [0,1[
@@ -66,7 +48,10 @@ void generate_points(std::vector<bool>& points, int& number_amount) {
     y_value = distribution(generator);
     // Calculate if it is in the circle
     in_circle = calculate_position(x_value, y_value);
-    points.push_back(in_circle);
+    // Add to count
+    if (in_circle) {
+      ++private_data.total_in_circle;
+    }
   }
 }
 
@@ -80,17 +65,9 @@ bool calculate_position(double& x_value, double& y_value) {
   return answer;
 }
 
-double approximate_pi(std::vector<bool>& points) {
-  double total_points = (double)(points.size());
-  double total_in_circle = 0.0;
+double approximate_pi(int& number_amount, double& total_in_circle) {
+  double total_points = (double)(number_amount);
   double pi = 0.0;
-  // Find the total amount of points in the circle
-  for (int i = 0; i < total_points; ++i) {
-    // If true, the point is in the circle
-    if(points[i]){
-      ++total_in_circle;
-    }
-  }
   pi = (double)(4.0 * total_in_circle / total_points);
   return pi;
 }
