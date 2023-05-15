@@ -1,17 +1,17 @@
 // TODO(me): change from defines to parameters
 
-#define NUMBER_AMOUNT 100 
+#define NUMBER_AMOUNT 100000000
 
 #include <vector>
 #include <iostream>
+#include <random>
 
 void show_results(double& pi);
 void generate_points(std::vector<bool>& points);
-void generate_random(double& container);
 bool calculate_position(double& x_value, double& y_value);
 double approximate_pi(std::vector<bool>& points);
 
-int main(int argc, char ** argv) {  
+int main(int argc, char ** argv) {
   // Create the vector to hold the points
   std::vector<bool> points;
   // Generate the points
@@ -23,22 +23,23 @@ int main(int argc, char ** argv) {
 }
 
 void generate_points(std::vector<bool>& points) {
+  // Create the default random engine generator
+  std::default_random_engine generator;
+  // Set the distribution in the range [0,1[
+  std::uniform_real_distribution<double> distribution(0.0,1.0);
   double x_value = 0.0;
   double y_value = 0.0;
   bool in_circle = false;
   for (int i = 0; i < NUMBER_AMOUNT; ++i) {
     // Generate the random points
-    generate_random(x_value);
-    generate_random(y_value);
+    x_value = distribution(generator);
+    y_value = distribution(generator);
     // Calculate if it is in the circle
     in_circle = calculate_position(x_value, y_value);
     points.push_back(in_circle);
   }
 }
 
-void generate_random(double& container) {
-  // rand_r
-}
 
 bool calculate_position(double& x_value, double& y_value) {
   bool answer = false;
@@ -51,8 +52,8 @@ bool calculate_position(double& x_value, double& y_value) {
 }
 
 double approximate_pi(std::vector<bool>& points) {
-  int total_points = points.size();
-  int total_in_circle = 0;
+  double total_points = (double)(points.size());
+  double total_in_circle = 0.0;
   double pi = 0.0;
   // Find the total amount of points in the circle
   for (int i = 0; i < total_points; ++i) {
@@ -61,7 +62,7 @@ double approximate_pi(std::vector<bool>& points) {
       ++total_in_circle;
     }
   }
-  pi = (double)(4 * total_in_circle / total_points);
+  pi = (double)(4.0 * total_in_circle / total_points);
   return pi;
 }
 
