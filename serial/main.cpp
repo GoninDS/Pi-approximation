@@ -3,10 +3,36 @@
 #include <string>
 #include <random>
 
-void show_results(double& pi);
+/**
+ * @brief Generates points from [0,1[ with a standard distribution
+ * 
+ * @param points Vector that contains if the points are in or outside of the circle
+ * @param number_amount The amount of numbers used for the simulation
+ */
 void generate_points(std::vector<bool>& points, int& number_amount);
+/**
+ * @brief Checks if the x and y values are inside the circle
+ * 
+ * @param x_value The x value for the point
+ * @param y_value The y value for the point
+ * @return true The point is in the circle
+ * @return false The point is out of the circle
+ */
 bool calculate_position(double& x_value, double& y_value);
+/**
+ * @brief Approximates pi with the amount of points calculated in the circle
+ * 
+ * @param points Contains the vector that contains if the points are in or outside of the circle
+ * @return double The answer with the approximated pi
+ */
 double approximate_pi(std::vector<bool>& points);
+/**
+ * @brief Show the obtained results in the command line
+ * 
+ * @param pi The variable containing the approximation
+ */
+void show_results(double& pi);
+
 
 int main(int argc, char ** argv) {
   if (argc == 2) {
@@ -43,7 +69,6 @@ void generate_points(std::vector<bool>& points, int& number_amount) {
     points.push_back(in_circle);
   }
 }
-
 
 bool calculate_position(double& x_value, double& y_value) {
   bool answer = false;
