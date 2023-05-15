@@ -1,28 +1,32 @@
-// TODO(me): change from defines to parameters
-
-#define NUMBER_AMOUNT 100000000
-
 #include <vector>
 #include <iostream>
+#include <string>
 #include <random>
 
 void show_results(double& pi);
-void generate_points(std::vector<bool>& points);
+void generate_points(std::vector<bool>& points, int& number_amount);
 bool calculate_position(double& x_value, double& y_value);
 double approximate_pi(std::vector<bool>& points);
 
 int main(int argc, char ** argv) {
-  // Create the vector to hold the points
-  std::vector<bool> points;
-  // Generate the points
-  generate_points(points);
-  // Approximate pi
-  double pi = approximate_pi(points);
-  show_results(pi);
+  if (argc == 2) {
+    int number_amount = std::stoi(argv[1]);
+    // Create the vector to hold the points
+    std::vector<bool> points;
+    // Generate the points
+    generate_points(points, number_amount);
+    // Approximate pi
+    double pi = approximate_pi(points);
+    show_results(pi);
+  } else {
+    std::cerr << 
+        "Please only insert the amount of numbers for the simulation"
+        << std::endl;
+  }
   return 0;
 }
 
-void generate_points(std::vector<bool>& points) {
+void generate_points(std::vector<bool>& points, int& number_amount) {
   // Create the default random engine generator
   std::default_random_engine generator;
   // Set the distribution in the range [0,1[
@@ -30,7 +34,7 @@ void generate_points(std::vector<bool>& points) {
   double x_value = 0.0;
   double y_value = 0.0;
   bool in_circle = false;
-  for (int i = 0; i < NUMBER_AMOUNT; ++i) {
+  for (int i = 0; i < number_amount; ++i) {
     // Generate the random points
     x_value = distribution(generator);
     y_value = distribution(generator);
