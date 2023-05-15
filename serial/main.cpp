@@ -3,7 +3,9 @@
 #define NUMBER_AMOUNT 100 
 
 #include <vector>
+#include <iostream>
 
+void show_results(double& pi);
 void generate_points(std::vector<bool>& points);
 void generate_random(double& container);
 bool calculate_position(double& x_value, double& y_value);
@@ -15,7 +17,8 @@ int main(int argc, char ** argv) {
   // Generate the points
   generate_points(points);
   // Approximate pi
-  approximate_pi(points);
+  double pi = approximate_pi(points);
+  show_results(pi);
   return 0;
 }
 
@@ -41,7 +44,7 @@ bool calculate_position(double& x_value, double& y_value) {
   bool answer = false;
   double x_squared = x_value * x_value;
   double y_squared = y_value * y_value;
-  if (x_squared + y_square <= 1) {
+  if (x_squared + y_squared <= 1) {
     answer = true;
   }  
   return answer;
@@ -60,4 +63,8 @@ double approximate_pi(std::vector<bool>& points) {
   }
   pi = (double)(4 * total_in_circle / total_points);
   return pi;
+}
+
+void show_results(double& pi) {
+  std::cout << "PI APPROXIMATION: " << pi << std::endl;
 }
