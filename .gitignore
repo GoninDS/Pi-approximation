@@ -1,0 +1,7 @@
+Makefile
+.vscode
+.DS_Store
+thumbs.db
+bin
+build
+doc
