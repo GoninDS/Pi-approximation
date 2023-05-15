@@ -4,9 +4,20 @@ int main(int argc, char ** argv) {
   if (argc == 3) {
     int number_amount = std::stoi(argv[1]);
     int thread_count = std::stoi(argv[2]);
+
+    // Begin the time recording
+    std::chrono::_V2::system_clock::time_point start
+        = std::chrono::high_resolution_clock::now();
+    // Do the simulation
     double total_in_circle = handle_threads(number_amount, thread_count);
     double pi = approximate_pi(number_amount, total_in_circle);
-    show_results(pi);
+    // End the time recording
+    std::chrono::_V2::system_clock::time_point end
+        = std::chrono::high_resolution_clock::now();
+    // Elapsed time
+    std::chrono::duration<double> elapsed_time
+        = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+    show_results(pi, elapsed_time);
   } else {
     std::cerr << 
         "Please only insert the amount of numbers for the simulation and the thread count"
@@ -82,6 +93,7 @@ double approximate_pi(int& number_amount, double& total_in_circle) {
   return pi;
 }
 
-void show_results(double& pi) {
+void show_results(double& pi, std::chrono::duration<double>& elapsed_time) {
+  std::cout << "EXECUTION TIME: " << elapsed_time.count() << "s" << std::endl;
   std::cout << "PI APPROXIMATION: " << pi << std::endl;
 }

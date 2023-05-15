@@ -1,8 +1,9 @@
+#include <chrono>
+#include <iostream>
+#include <random>
+#include <string>
 #include <thread>
 #include <vector>
-#include <iostream>
-#include <string>
-#include <random>
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
@@ -46,5 +47,6 @@ double approximate_pi(int& number_amount, double& total_in_circle);
  * @brief Show the obtained results in the command line
  * 
  * @param pi The variable containing the approximation
+ * @param elapsed_time Elapsed simulation time
  */
-void show_results(double& pi);
+void show_results(double& pi, std::chrono::duration<double>& elapsed_time);
