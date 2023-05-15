@@ -38,37 +38,29 @@ double handle_threads(int number_amount, int& thread_count) {
 }
 
 void generate_points(int number_amount, private_data* private_data) {
-
-  std::string greet = "Hello from generate points #";
-  greet += std::to_string(private_data->thread_number);
-  greet += " of ";
-  greet += std::to_string(private_data->thread_count);
-  greet += "\n";
-  std::cout << greet;
-
-  // // Calculate the respective block
-  // int start = private_data->thread_number * (number_amount / private_data->thread_count) +
-  //     MIN(private_data->thread_number, number_amount % private_data->thread_count);
-  // int end = private_data->thread_number + 1 * (number_amount / private_data->thread_count) +
-  //     MIN(private_data->thread_number + 1, number_amount % private_data->thread_count);
-  // // Create the default random engine generator
-  // std::default_random_engine generator;
-  // // Set the distribution in the range [0,1[
-  // std::uniform_real_distribution<double> distribution(0.0,1.0);
-  // double x_value = 0.0;
-  // double y_value = 0.0;
-  // bool in_circle = false;
-  // for (int i = start; i < end; ++i) {
-  //   // Generate the random points
-  //   x_value = distribution(generator);
-  //   y_value = distribution(generator);
-  //   // Calculate if it is in the circle
-  //   in_circle = calculate_position(x_value, y_value);
-  //   // Add to count
-  //   if (in_circle) {
-  //     ++private_data->total_in_circle;
-  //   }
-  // }
+  // Calculate the respective block
+  int start = private_data->thread_number * (number_amount / private_data->thread_count) +
+      MIN(private_data->thread_number, number_amount % private_data->thread_count);
+  int end = private_data->thread_number + 1 * (number_amount / private_data->thread_count) +
+      MIN(private_data->thread_number + 1, number_amount % private_data->thread_count);
+  // Create the default random engine generator
+  std::default_random_engine generator;
+  // Set the distribution in the range [0,1[
+  std::uniform_real_distribution<double> distribution(0.0,1.0);
+  double x_value = 0.0;
+  double y_value = 0.0;
+  bool in_circle = false;
+  for (int i = start; i < end; ++i) {
+    // Generate the random points
+    x_value = distribution(generator);
+    y_value = distribution(generator);
+    // Calculate if it is in the circle
+    in_circle = calculate_position(x_value, y_value);
+    // Add to count
+    if (in_circle) {
+      ++private_data->total_in_circle;
+    }
+  }
 }
 
 bool calculate_position(double& x_value, double& y_value) {
