@@ -15,15 +15,19 @@ int main(int argc, char ** argv) {
   return 0;
 }
 
-double handle_threads(int& number_amount, int& thread_count) {
+double handle_threads(int number_amount, int& thread_count) {
   // Vector containing the threads
   std::vector<std::thread> threads;
   // Private data for each thread
   std::vector<private_data> private_data_vector;
   // Creates the threads
   for (int i = 0; i < thread_count; ++i) {
-    threads.push_back(std::thread(generate_points));
+    // Create the private data
     private_data_vector.emplace_back();
+    private_data_vector[i].thread_number = i;
+    private_data_vector[i].thread_count = thread_count;
+    // Create the thread
+    threads.push_back(std::thread(generate_points, number_amount, &private_data_vector[i]));
   }
   double total_in_circle = 0.0;
   // Joins the threads
@@ -34,7 +38,12 @@ double handle_threads(int& number_amount, int& thread_count) {
   return total_in_circle;
 }
 
-void generate_points(int& number_amount, private_data& private_data) {
+void generate_points(int number_amount, private_data* private_data) {
+  // Calculate the respective block
+  int start = private_data->thread_number * (number_amount / private_data->thread_count) +
+      MIN(private_data->thread_number, number_amount % private_data->thread_count);
+  int end = private_data->thread_number + 1 * (number_amount / private_data->thread_count) +
+      MIN(private_data->thread_number + 1, number_amount % private_data->thread_count);
   // Create the default random engine generator
   std::default_random_engine generator;
   // Set the distribution in the range [0,1[
@@ -42,7 +51,7 @@ void generate_points(int& number_amount, private_data& private_data) {
   double x_value = 0.0;
   double y_value = 0.0;
   bool in_circle = false;
-  for (int i = 0; i < number_amount; ++i) {
+  for (int i = start; i < end; ++i) {
     // Generate the random points
     x_value = distribution(generator);
     y_value = distribution(generator);
@@ -50,7 +59,7 @@ void generate_points(int& number_amount, private_data& private_data) {
     in_circle = calculate_position(x_value, y_value);
     // Add to count
     if (in_circle) {
-      ++private_data.total_in_circle;
+      ++private_data->total_in_circle;
     }
   }
 }
