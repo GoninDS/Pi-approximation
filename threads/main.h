@@ -10,8 +10,7 @@ struct private_data {
   int total_in_circle;
   int thread_number;
   int thread_count;
-  std::default_random_engine* generator;
-  std::uniform_real_distribution<double>* distribution;
+  unsigned long long seed;
 };
 
 /**

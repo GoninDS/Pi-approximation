@@ -25,6 +25,8 @@ double handle_threads(int number_amount, int& thread_count) {
     // Create the private data
     private_data_vector[i].thread_number = i;
     private_data_vector[i].thread_count = thread_count;
+    // Generate the seed
+    private_data_vector[i].seed = std::random_device()();
     // Create the thread
     threads.push_back(std::thread(generate_points, number_amount, &private_data_vector[i]));
   }
@@ -41,13 +43,10 @@ void generate_points(int number_amount, private_data* private_data) {
   // Calculate the respective block
   int start = private_data->thread_number * (number_amount / private_data->thread_count) +
       MIN(private_data->thread_number, number_amount % private_data->thread_count);
-
   int end = (private_data->thread_number + 1) * (number_amount / private_data->thread_count) +
       MIN(private_data->thread_number + 1, number_amount % private_data->thread_count);
-
-  std::string debug = std::to_string(private_data->thread_number);
-  // Create the default random engine generator
-  std::default_random_engine generator;
+  // Standard mersenne_twister_engine
+  std::mt19937 generator(private_data->seed);
   // Set the distribution in the range [0,1[
   std::uniform_real_distribution<double> distribution(0.0,1.0);
   double x_value = 0.0;
@@ -57,12 +56,6 @@ void generate_points(int number_amount, private_data* private_data) {
     // Generate the random points
     x_value = distribution(generator);
     y_value = distribution(generator);
-
-    std::string point = "THREAD: ";
-    point += std::to_string(private_data->thread_number) + " [";
-    point += std::to_string(x_value) + "," + std::to_string(y_value) + "]\n";
-    std::cout << point;
-
     // Calculate if it is in the circle
     in_circle = calculate_position(x_value, y_value);
     // Add to count
