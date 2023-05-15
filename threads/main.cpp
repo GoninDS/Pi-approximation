@@ -20,20 +20,11 @@ double handle_threads(int number_amount, int& thread_count) {
   std::vector<std::thread> threads;
   // Private data for each thread
   std::vector<private_data> private_data_vector(thread_count);
-
-
-  // Create the default random engine generator
-  std::default_random_engine generator;
-  // Set the distribution in the range [0,1[
-  std::uniform_real_distribution<double> distribution(0.0,1.0);
-
   // Creates the threads
   for (int i = 0; i < thread_count; ++i) {
     // Create the private data
     private_data_vector[i].thread_number = i;
     private_data_vector[i].thread_count = thread_count;
-    private_data_vector[i].generator = &generator;
-    private_data_vector[i].distribution = &distribution;
     // Create the thread
     threads.push_back(std::thread(generate_points, number_amount, &private_data_vector[i]));
   }
@@ -50,17 +41,28 @@ void generate_points(int number_amount, private_data* private_data) {
   // Calculate the respective block
   int start = private_data->thread_number * (number_amount / private_data->thread_count) +
       MIN(private_data->thread_number, number_amount % private_data->thread_count);
+
   int end = (private_data->thread_number + 1) * (number_amount / private_data->thread_count) +
       MIN(private_data->thread_number + 1, number_amount % private_data->thread_count);
 
-
+  std::string debug = std::to_string(private_data->thread_number);
+  // Create the default random engine generator
+  std::default_random_engine generator;
+  // Set the distribution in the range [0,1[
+  std::uniform_real_distribution<double> distribution(0.0,1.0);
   double x_value = 0.0;
   double y_value = 0.0;
   bool in_circle = false;
   for (int i = start; i < end; ++i) {
     // Generate the random points
-    x_value = private_data->distribution(private_data->generator);
-    y_value = drivate_data->distribution(private_data->generator);
+    x_value = distribution(generator);
+    y_value = distribution(generator);
+
+    std::string point = "THREAD: ";
+    point += std::to_string(private_data->thread_number) + " [";
+    point += std::to_string(x_value) + "," + std::to_string(y_value) + "]\n";
+    std::cout << point;
+
     // Calculate if it is in the circle
     in_circle = calculate_position(x_value, y_value);
     // Add to count
@@ -90,4 +92,3 @@ double approximate_pi(int& number_amount, double& total_in_circle) {
 void show_results(double& pi) {
   std::cout << "PI APPROXIMATION: " << pi << std::endl;
 }
-
