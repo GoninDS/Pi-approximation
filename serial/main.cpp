@@ -53,8 +53,10 @@ int main(int argc, char ** argv) {
 }
 
 void generate_points(std::vector<bool>& points, int& number_amount) {
-  // Create the default random engine generator
-  std::default_random_engine generator;
+  // Will be used to obtain a seed for the random number engine
+  std::random_device rd;
+  // Standard mersenne_twister_engine seeded with rd()
+  std::mt19937 generator(rd());
   // Set the distribution in the range [0,1[
   std::uniform_real_distribution<double> distribution(0.0,1.0);
   double x_value = 0.0;
