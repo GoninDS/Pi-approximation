@@ -10,4 +10,4 @@ Pi approximation using random numbers. Implemented in C++ with threads alongside
 
     ./executable AMOUNT_OF_POINTS THREAD_COUNT
 
-
+This was based on monte carlo.
